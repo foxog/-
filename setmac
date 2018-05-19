@@ -1,23 +1,24 @@
 #!/bin/bash
 #set mac address to another computer
-if [ "$1" == "-c" ] ;then
+if [ ! -f ~/macback/mac.set ] ;then
+    echo "you haven't set your mac yet,"
     read -p "input the mac you want to set: " set_mac
-    echo ${setmac}>~/macback/mac.set
+    echo ${set_mac}>~/macback/mac.set
+    echo "you mac is save to ~/macback/mac.set"
+fi
+if [ "$1" == "c" ] ;then
+    read -p "input the mac you want to set: " set_mac
+    echo ${set_mac}>~/macback/mac.set
     echo "you mac is save to ~/macback/mac.set"
     exit 0
 fi
-card_name=$(cat ~/mackback/card.name)
+card_name=$(cat ~/macback/card.name)
 set_mac=$(cat ~/macback/mac.set)
-if [ "$?" == "1" ] ;then
-    echo "you haven't set your mac yet"
-    $(setmac -c)
-    set_mac=$(cat ~/macback/mac.set)
-fi
 if [ "$(ifconfig|grep ${set_mac})" == "" ] ;then
     sudo ifconfig ${card_name} down
     sudo ifconfig ${card_name} hw ether ${set_mac}
     sudo ifconfig ${card_name} up
-    echo "your mac has change to ${set_mac},use option '-c' to change the setmac"
+    echo "your mac has change to ${set_mac},use option 'c' to change the setmac"
 else
-    echo "your mac need't change,use option '-c' to change the setmac"
+    echo "your mac need't change,use option 'c' to change the setmac"
 fi
