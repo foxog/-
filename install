@@ -1,0 +1,40 @@
+#!/bin/bash
+# ver 0.0.1
+# install those scripts to your computer
+#
+# make choose 
+# why does I write those code...
+# Actuall I just need the return value of ifconfig....
+# mabye I do that in ver 0.0.2
+#
+echo "choose witch one you want to change"
+card_name_g=$(ifconfig|grep "flags"|sed 's/:.*//g')
+card_flag=0
+while [ "$card_flag" == "0" ]
+do
+    read -p "${card_name_g}: " card_name
+    for card_name_t in ${card_name_g}
+        do
+        if [ "${card_name_t}" == "${card_name}" ] ;then
+            card_flag=1
+            fi
+        done
+    if [ "${card_flag}" == "0" ] ;then
+        echo "you input a wrong value,please input again"
+    elif [ "${card_flag}" == "1" ] ;then
+        echo "your ${card_name}'s mac will be saved in ~/mackback/mac.bak"
+        fi
+done
+#
+# back up mac
+#
+mkdir ~/macback 2>/dev/null
+ifconfig ${card_name}|grep "ether"|sed 's/^.*ether //g'|sed 's/ .*$//g'>~/macback/mac.bak
+#
+# copy setmac and backmac to ~/bin and add them to .bashrc
+#
+mkdir ~/bin
+cp ./setmac ~/bin;cp ./backmac ~/bin
+echo "alias backmac='sudo bash ~/bin/backmac'">>~/.bashrc
+echo "alias setmac='sudo bash ~/bin/setmac'">>~/.bashrc
+echo "this script is installed in you computer;use setmac/backmac to change you mac,you need to reboot or input source ~/.bashrc to make them avilarble to use"
