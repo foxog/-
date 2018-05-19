@@ -1,0 +1,14 @@
+#!/bin/bash
+#set your mac as you were
+#0.0.1.1 update log canceled sudo bash in oder to use ~/
+back_mac=$(cat ~/macback/mac.bak)
+card_name=$(cat ~/macback/card.name)
+if [ "$(ifconfig|grep ${back_mac})" == "" ] ;then
+    sudo ifconfig ${card_name} down
+    sudo ifconfig ${card_name} hw ether ${back_mac}
+    sudo ifconfig ${card_name} up
+    echo "your mac is changed to ${back_mac}"
+else
+    echo "your mac need't change"
+fi
+

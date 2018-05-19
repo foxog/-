@@ -1,12 +1,23 @@
 #!/bin/bash
 # ver 0.0.1
 # install those scripts to your computer
+#0.0.1.1 update log canceled sudo bash in oder to use ~/
 #
-# make choose 
 # why does I write those code...
 # Actuall I just need the return value of ifconfig....
 # mabye I do that in ver 0.0.2
 #
+# part 1 make choose witch card to backup&change
+#
+if [ "$(whoami)" == "root" ] ;then
+    echo "don't use sudo to run this script"
+    read -p "if you are root ,input y to continue ,n to exit [Y/n]: " yn
+    if [ "${yn}" == "y" -o "${yn}" == "Y" ] ;then
+        echo "this script will install under /root/"
+    else
+        exit 0
+    fi
+fi
 echo "choose witch one you want to change"
 card_name_g=$(ifconfig|grep "flags"|sed 's/:.*//g')
 card_flag=0
@@ -17,24 +28,25 @@ do
         do
         if [ "${card_name_t}" == "${card_name}" ] ;then
             card_flag=1
-            fi
+        fi
         done
     if [ "${card_flag}" == "0" ] ;then
         echo "you input a wrong value,please input again"
     elif [ "${card_flag}" == "1" ] ;then
         echo "your ${card_name}'s mac will be saved in ~/mackback/mac.bak"
-        fi
+    fi
 done
 #
-# back up mac
+# part 2 back up mac and save card_name
 #
 mkdir ~/macback 2>/dev/null
 ifconfig ${card_name}|grep "ether"|sed 's/^.*ether //g'|sed 's/ .*$//g'>~/macback/mac.bak
+echo ${card_name}>~/macback/card.name
 #
-# copy setmac and backmac to ~/bin and add them to .bashrc
+# part 3 copy setmac and backmac to ~/bin and add them to .bashrc
 #
 mkdir ~/bin
 cp ./setmac ~/bin;cp ./backmac ~/bin
-echo "alias backmac='sudo bash ~/bin/backmac'">>~/.bashrc
-echo "alias setmac='sudo bash ~/bin/setmac'">>~/.bashrc
+echo "alias backmac='bash ~/bin/backmac'">>~/.bashrc
+echo "alias setmac='bash ~/bin/setmac'">>~/.bashrc
 echo "this script is installed in you computer;use setmac/backmac to change you mac,you need to reboot or input source ~/.bashrc to make them avilarble to use"
